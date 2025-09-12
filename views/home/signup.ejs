@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form id="signupForm" action="/signup_insert" method="POST">
+                
+                <input type="hidden" id="role" name="user_role" value="customer">
+                
+                <input type="text" class="form-control" name="name" id="name" placeholder="Username" required>
+                <input type="email" class="form-control" name="email" id="email" placeholder="Email address" required>
+                <input type="number" class="form-control" name="phone" id="phone" placeholder="Phone number" required>
+                <input type="password" class="form-control" name="password" id="password" placeholder="Password" required>
+                
+                <!-- <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" id="terms" required>
+                    <label class="form-check-label" for="terms">
+                        I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+                    </label>
+                </div> -->
+                
+                <button type="submit" class="btn btn-auth">Create Account</button>
+                
+                <div class="auth-footer">
+                    Already have an account? <a href="/login">Log in</a>
+                </div>
+            </form>
+</body>
+</html>
