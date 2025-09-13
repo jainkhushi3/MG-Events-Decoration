@@ -22,7 +22,7 @@ class userController {
   static signup_insert = async (req, res) => {
     try {
       const { user_role, name, email, phone, password } = req.body;
-      console.log(req.body);
+      // console.log(req.body);
       if (user_role == "" || name == "" || email == "" || phone == "" || password == "") {
         req.flash("error", "All fields are required.");
         res.redirect("/signup");

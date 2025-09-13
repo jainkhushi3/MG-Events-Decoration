@@ -1,1 +1,752 @@
-admin
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventMaster - Admin Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --info: #4895ef;
+            --warning: #f72585;
+            --danger: #e63946;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fb;
+            color: var(--dark);
+        }
+        
+        /* Sidebar Styles */
+        .sidebar {
+            width: 250px;
+            background: var(--dark);
+            color: white;
+            transition: all 0.3s ease;
+            height: 100vh;
+            position: fixed;
+            z-index: 100;
+        }
+        
+        .sidebar-header {
+            padding: 20px;
+            background: var(--secondary);
+            display: flex;
+            align-items: center;
+        }
+        
+        .sidebar-header h3 {
+            margin-left: 10px;
+            font-weight: 600;
+        }
+        
+        .sidebar ul li a {
+            padding: 15px 20px;
+            display: block;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s;
+            font-size: 1rem;
+        }
+        
+        .sidebar ul li a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .sidebar ul li a.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .sidebar ul li a i {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+        
+        /* Main Content */
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+        
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        /* Cards */
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 20px;
+            transition: transform 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-card {
+            padding: 20px;
+        }
+        
+        .stat-card i {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            opacity: 0.8;
+        }
+        
+        .stat-card .count {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        
+        .stat-card .label {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+        
+        /* Tables */
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 20px;
+        }
+        
+        .table thead th {
+            background: var(--light);
+            border: none;
+            font-weight: 600;
+        }
+        
+        .table td, .table th {
+            vertical-align: middle;
+            padding: 12px 15px;
+        }
+        
+        /* Badges */
+        .badge {
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+        
+        /* Buttons */
+        .btn-primary {
+            background: var(--primary);
+            border: none;
+        }
+        
+        .btn-primary:hover {
+            background: var(--secondary);
+        }
+        
+        /* Tabs */
+        .nav-tabs .nav-link {
+            border: none;
+            padding: 12px 20px;
+            color: var(--gray);
+            font-weight: 500;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .nav-tabs .nav-link.active {
+            color: var(--primary);
+            border-bottom: 3px solid var(--primary);
+            background: transparent;
+        }
+        
+        /* Charts */
+        .chart-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 20px;
+            height: 300px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 80px;
+                text-align: center;
+            }
+            
+            .sidebar-header h3, .sidebar ul li a span {
+                display: none;
+            }
+            
+            .sidebar ul li a i {
+                margin-right: 0;
+                font-size: 1.5rem;
+            }
+            
+            .main-content {
+                margin-left: 80px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 0;
+                overflow: hidden;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .sidebar.active {
+                width: 250px;
+            }
+            
+            .sidebar-header h3, .sidebar ul li a span {
+                display: inline-block;
+            }
+            
+            .sidebar ul li a i {
+                margin-right: 10px;
+            }
+        }
+        
+        /* Custom colors for cards */
+        .bg-custom-1 {
+            background: linear-gradient(45deg, #4361ee, #3a0ca3);
+            color: white;
+        }
+        
+        .bg-custom-2 {
+            background: linear-gradient(45deg, #f72585, #b5179e);
+            color: white;
+        }
+        
+        .bg-custom-3 {
+            background: linear-gradient(45deg, #4cc9f0, #4895ef);
+            color: white;
+        }
+        
+        .bg-custom-4 {
+            background: linear-gradient(45deg, #560bad, #7209b7);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-calendar-alt fa-2x"></i>
+            <h3>EventMaster</h3>
+        </div>
+        <ul class="list-unstyled">
+            <li><a href="#" class="active"><i class="fas fa-home"></i> <span>Dashboard</span></a></li>
+            <li><a href="#"><i class="fas fa-calendar-day"></i> <span>Events</span></a></li>
+            <li><a href="#"><i class="fas fa-box-open"></i> <span>Packages</span></a></li>
+            <li><a href="#"><i class="fas fa-users"></i> <span>Users</span></a></li>
+            <li><a href="#"><i class="fas fa-credit-card"></i> <span>Payments</span></a></li>
+            <li><a href="#"><i class="fas fa-bookmark"></i> <span>Bookings</span></a></li>
+            <li><a href="#"><i class="fas fa-chart-bar"></i> <span>Reports</span></a></li>
+            <li><a href="#"><i class="fas fa-cog"></i> <span>Settings</span></a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <div class="header">
+            <div>
+                <h4>Admin Dashboard</h4>
+            </div>
+            <div class="d-flex align-items-center">
+                <div class="input-group me-3" style="width: 300px;">
+                    <input type="text" class="form-control" placeholder="Search...">
+                    <button class="btn btn-primary" type="button"><i class="fas fa-search"></i></button>
+                </div>
+                <div class="dropdown">
+                    <button class="btn btn-light dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fas fa-user-circle me-2"></i>Admin User
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profile</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Cards -->
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card stat-card bg-custom-1">
+                    <div class="card-body">
+                        <i class="fas fa-calendar-day"></i>
+                        <div class="count">24</div>
+                        <div class="label">Total Events</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stat-card bg-custom-2">
+                    <div class="card-body">
+                        <i class="fas fa-users"></i>
+                        <div class="count">156</div>
+                        <div class="label">Total Users</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stat-card bg-custom-3">
+                    <div class="card-body">
+                        <i class="fas fa-bookmark"></i>
+                        <div class="count">89</div>
+                        <div class="label">Total Bookings</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stat-card bg-custom-4">
+                    <div class="card-body">
+                        <i class="fas fa-dollar-sign"></i>
+                        <div class="count">$12,560</div>
+                        <div class="label">Total Revenue</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Tabs -->
+        <ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="events-tab" data-bs-toggle="tab" data-bs-target="#events" type="button" role="tab">Events</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="packages-tab" data-bs-toggle="tab" data-bs-target="#packages" type="button" role="tab">Packages</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="users-tab" data-bs-toggle="tab" data-bs-target="#users" type="button" role="tab">Users</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="payments-tab" data-bs-toggle="tab" data-bs-target="#payments" type="button" role="tab">Payments</button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="myTabContent">
+            <!-- Events Tab -->
+            <div class="tab-pane fade show active" id="events" role="tabpanel">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5>Event Management</h5>
+                    <button class="btn btn-primary"><i class="fas fa-plus me-2"></i>Add New Event</button>
+                </div>
+                
+                <div class="table-container">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Event Name</th>
+                                <th>Date</th>
+                                <th>Location</th>
+                                <th>Attendees</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Tech Conference 2023</td>
+                                <td>15 Oct, 2023</td>
+                                <td>San Francisco, CA</td>
+                                <td>250/300</td>
+                                <td><span class="badge bg-success">Active</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Music Festival</td>
+                                <td>22 Nov, 2023</td>
+                                <td>Austin, TX</td>
+                                <td>1200/1500</td>
+                                <td><span class="badge bg-success">Active</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Business Workshop</td>
+                                <td>05 Dec, 2023</td>
+                                <td>New York, NY</td>
+                                <td>45/50</td>
+                                <td><span class="badge bg-success">Active</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Product Launch</td>
+                                <td>18 Sep, 2023</td>
+                                <td>Los Angeles, CA</td>
+                                <td>80/100</td>
+                                <td><span class="badge bg-warning">Upcoming</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Charity Gala</td>
+                                <td>10 Aug, 2023</td>
+                                <td>Chicago, IL</td>
+                                <td>200/200</td>
+                                <td><span class="badge bg-secondary">Completed</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Packages Tab -->
+            <div class="tab-pane fade" id="packages" role="tabpanel">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5>Event Packages</h5>
+                    <button class="btn btn-primary"><i class="fas fa-plus me-2"></i>Add New Package</button>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="card-title mb-0">Basic Package</h5>
+                            </div>
+                            <div class="card-body">
+                                <h2 class="card-title pricing-card-title">$299<small class="text-muted fw-light">/event</small></h2>
+                                <ul class="list-unstyled mt-3 mb-4">
+                                    <li><i class="fas fa-check text-success me-2"></i> Up to 100 attendees</li>
+                                    <li><i class="fas fa-check text-success me-2"></i> Basic decorations</li>
+                                    <li><i class="fas fa-check text-success me-2"></i> Standard sound system</li>
+                                    <li><i class="fas fa-times text-danger me-2"></i> Catering services</li>
+                                    <li><i class="fas fa-times text-danger me-2"></i> Photography</li>
+                                </ul>
+                            </div>
+                            <div class="card-footer">
+                                <button class="btn btn-outline-primary w-100">Edit Package</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header bg-success text-white">
+                                <h5 class="card-title mb-0">Standard Package</h5>
+                            </div>
+                            <div class="card-body">
+                                <h2 class="card-title pricing-card-title">$599<small class="text-muted fw-light">/event</small></h2>
+                                <ul class="list-unstyled mt-3 mb-4">
+                                    <li><i class="fas fa-check text-success me-2"></i> Up to 300 attendees</li>
+                                    <li><i class="fas fa-check text-success me-2"></i> Premium decorations</li>
+                                    <li><i class="fas fa-check text-success me-2"></i> Professional sound system</li>
+                                    <li><i class="fas fa-check text-success me-2"></i> Basic catering</li>
+                                    <li><i class="fas fa-times text-danger me-2"></i> Photography</li>
+                                </ul>
+                            </div>
+                            <div class="card-footer">
+                                <button class="btn btn-outline-success w-100">Edit Package</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="card">
+                            <div class="card-header bg-warning text-dark">
+                                <h5 class="card-title mb-0">Premium Package</h5>
+                            </div>
+                            <div class="card-body">
+                                <h2 class="card-title pricing-card-title">$999<small class="text-muted fw-light">/event</small></h2>
+                                <ul class="list-unstyled mt-3 mb-4">
+                                    <li><i class="fas fa-check text-success me-2"></i> Unlimited attendees</li>
+                                    <li><i class="fas fa-check text-success me-2"></i> Luxury decorations</li>
+                                    <li><i class="fas fa-check text-success me-2"></i> Professional AV system</li>
+                                    <li><i class="fas fa-check text-success me-2"></i> Premium catering</li>
+                                    <li><i class="fas fa-check text-success me-2"></i> Photography & Videography</li>
+                                </ul>
+                            </div>
+                            <div class="card-footer">
+                                <button class="btn btn-outline-warning w-100">Edit Package</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Users Tab -->
+            <div class="tab-pane fade" id="users" role="tabpanel">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5>User Management</h5>
+                    <button class="btn btn-primary"><i class="fas fa-plus me-2"></i>Add New User</button>
+                </div>
+                
+                <div class="table-container">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Events Attended</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <img src="https://via.placeholder.com/40" class="rounded-circle me-2" alt="...">
+                                        <div>John Doe</div>
+                                    </div>
+                                </td>
+                                <td>john.doe@example.com</td>
+                                <td>Customer</td>
+                                <td>5</td>
+                                <td><span class="badge bg-success">Active</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <img src="https://via.placeholder.com/40" class="rounded-circle me-2" alt="...">
+                                        <div>Jane Smith</div>
+                                    </div>
+                                </td>
+                                <td>jane.smith@example.com</td>
+                                <td>Event Organizer</td>
+                                <td>12</td>
+                                <td><span class="badge bg-success">Active</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <img src="https://via.placeholder.com/40" class="rounded-circle me-2" alt="...">
+                                        <div>Robert Johnson</div>
+                                    </div>
+                                </td>
+                                <td>robert@example.com</td>
+                                <td>Admin</td>
+                                <td>N/A</td>
+                                <td><span class="badge bg-success">Active</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <img src="https://via.placeholder.com/40" class="rounded-circle me-2" alt="...">
+                                        <div>Sarah Williams</div>
+                                    </div>
+                                </td>
+                                <td>sarah@example.com</td>
+                                <td>Customer</td>
+                                <td>3</td>
+                                <td><span class="badge bg-warning">Inactive</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <img src="https://via.placeholder.com/40" class="rounded-circle me-2" alt="...">
+                                        <div>Michael Brown</div>
+                                    </div>
+                                </td>
+                                <td>michael@example.com</td>
+                                <td>Event Organizer</td>
+                                <td>8</td>
+                                <td><span class="badge bg-success">Active</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary"><i class="fas fa-edit"></i></button>
+                                    <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Payments Tab -->
+            <div class="tab-pane fade" id="payments" role="tabpanel">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5>Payment & Booking Details</h5>
+                    <div>
+                        <button class="btn btn-outline-primary me-2"><i class="fas fa-download me-2"></i>Export</button>
+                        <button class="btn btn-primary"><i class="fas fa-filter me-2"></i>Filter</button>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Booking ID</th>
+                                <th>Event</th>
+                                <th>Customer</th>
+                                <th>Date</th>
+                                <th>Amount</th>
+                                <th>Payment Method</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>#BK001</td>
+                                <td>Tech Conference 2023</td>
+                                <td>John Doe</td>
+                                <td>12 Aug, 2023</td>
+                                <td>$299.00</td>
+                                <td>Credit Card</td>
+                                <td><span class="badge bg-success">Completed</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></button>
+                                    <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#BK002</td>
+                                <td>Music Festival</td>
+                                <td>Jane Smith</td>
+                                <td>15 Aug, 2023</td>
+                                <td>$159.00</td>
+                                <td>PayPal</td>
+                                <td><span class="badge bg-success">Completed</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></button>
+                                    <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#BK003</td>
+                                <td>Business Workshop</td>
+                                <td>Robert Johnson</td>
+                                <td>18 Aug, 2023</td>
+                                <td>$599.00</td>
+                                <td>Bank Transfer</td>
+                                <td><span class="badge bg-warning">Pending</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></button>
+                                    <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#BK004</td>
+                                <td>Product Launch</td>
+                                <td>Sarah Williams</td>
+                                <td>20 Aug, 2023</td>
+                                <td>$999.00</td>
+                                <td>Credit Card</td>
+                                <td><span class="badge bg-success">Completed</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></button>
+                                    <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>#BK005</td>
+                                <td>Charity Gala</td>
+                                <td>Michael Brown</td>
+                                <td>22 Aug, 2023</td>
+                                <td>$199.00</td>
+                                <td>PayPal</td>
+                                <td><span class="badge bg-danger">Failed</span></td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></button>
+                                    <button class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+    
+    <script>
+        // Simple JavaScript for interactive elements
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tab functionality is handled by Bootstrap
+            
+            // Add active class to sidebar items on click
+            const sidebarLinks = document.querySelectorAll('.sidebar ul li a');
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    sidebarLinks.forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            // Simulated chart data (in a real application, you would use a charting library)
+            console.log('Dashboard loaded successfully');
+            
+            // Example of dynamic data update
+            setInterval(() => {
+                // This would typically fetch data from an API
+                const eventCount = document.querySelector('.stat-card:first-child .count');
+                const currentCount = parseInt(eventCount.textContent);
+                eventCount.textContent = currentCount + 1;
+            }, 30000);
+        });
+    </script>
+</body>
+</html>
