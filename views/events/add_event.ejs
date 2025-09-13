@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Management Form</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #2c3e50;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        input, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+        
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+        }
+        
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .required::after {
+            content: " *";
+            color: #e74c3c;
+        }
+        
+        .error {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .file-info {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+        
+        .btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .success-message {
+            background-color: #2ecc71;
+            color: white;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Create New Event</h1>
+        
+        <!-- <div class="success-message" id="successMessage">
+            Event created successfully!
+        </div> -->
+        
+        <form id="eventForm" action="/create_event" method="POST"  enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="event_name" class="required">Event Name</label>
+                <input type="text" id="event_name" name="event_name" required>
+                <div class="error" id="event_name_error">Please enter a valid event name</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="event_description">Event Description</label>
+                <textarea id="event_description" name="event_description"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="base_price" class="required">Base Price (Rs.)</label>
+                <input type="number" id="base_price" name="base_price" min="0" step="0.01" required>
+                <div class="error" id="base_price_error">Please enter a valid price</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="event_file">Event File Upload</label>
+                <input type="file" id="event_file" name="event_file">
+                <div class="file-info">Supported formats: PDF, JPG, PNG, DOCX. Max size: 5MB</div>
+                <div class="error" id="event_file_error">File size too large or invalid format</div>
+            </div>
+            
+            <button type="submit" class="btn">Create Event</button>
+        </form>
+    </div>
+
+    <!-- <script>
+        document.getElementById('eventForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Reset errors
+            const errorElements = document.querySelectorAll('.error');
+            errorElements.forEach(el => el.style.display = 'none');
+            
+            let isValid = true;
+            
+            // Validate event name
+            const eventName = document.getElementById('event_name').value.trim();
+            if (!eventName) {
+                document.getElementById('event_name_error').style.display = 'block';
+                isValid = false;
+            }
+            
+            // Validate base price
+            const basePrice = document.getElementById('base_price').value;
+            if (!basePrice || isNaN(basePrice) || parseFloat(basePrice) < 0) {
+                document.getElementById('base_price_error').style.display = 'block';
+                isValid = false;
+            }
+            
+            // Validate file if selected
+            const fileInput = document.getElementById('event_file');
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                const validTypes = ['image/jpeg', 'image/png', 'application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+                const maxSize = 5 * 1024 * 1024; // 5MB
+                
+                if (!validTypes.includes(file.type) || file.size > maxSize) {
+                    document.getElementById('event_file_error').style.display = 'block';
+                    isValid = false;
+                }
+            }
+            
+            if (isValid) {
+                // In a real application, you would submit the form data to the server here
+                // For demonstration, we'll just show the success message
+                document.getElementById('successMessage').style.display = 'block';
+                
+                // Reset form after 2 seconds
+                setTimeout(() => {
+                    document.getElementById('eventForm').reset();
+                    document.getElementById('successMessage').style.display = 'none';
+                }, 2000);
+            }
+        });
+    </script> -->
+</body>
+</html>
